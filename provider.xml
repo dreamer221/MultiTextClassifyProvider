@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<!-- 监控中心协议，如果为protocol="registry"，表示从注册中心发现监控中心地址，否则直连监控中心。 -->
+	<dubbo:monitor protocol="registry" />
+	<!-- 提供方应用名称信息，用于计算依赖关系，使dubbo管理页面比较清晰是哪个应用暴露出来的 -->
+	<dubbo:application name="provider_textclassify" />
+
+	<!-- address:注册中心服务器地址.使用zookeeper注册中心暴露服务地址 -->
+	<!-- check:注册中心不存在时，是否报错.默认是true.-->
+	<!-- register:是否向此注册中心注册服务，如果设为false，将只订阅，不注册.默认true -->
+	<!-- subscribe:是否向此注册中心订阅服务，如果设为false，将只注册，不订阅 .默认true-->
+	<!-- timeout: 注册中心请求超时时间(毫秒).默认5000-->
+	<!-- address="zookeeper://192.168.10.100:2181?backup=192.168.10.101:2181,192.168.10.102:2181,192.168.10.148:2181,192.168.10.149:2181"-->
+	<dubbo:registry
+		address="zookeeper://192.168.0.101:2181"
+		check="true"  register="true"  subscribe="false"  timeout="1200000"/>
+
+    <!-- 多协议配置 -->
+	<dubbo:protocol name="dubbo" port="20880" serialization="hessian2" server = "netty" />
+	<dubbo:protocol name="rmi" port="1099" serialization="java" server = "netty" />
+	<dubbo:protocol name="http" port="80" serialization="json" server = "servlet" />
+	
+	<!-- 使用多个协议暴露服务 -->
+	
+	<!-- version:服务版本，建议使用两位数字版本，如：1.0，通常在接口不兼容时版本号才需要升级.group:服务分组，当一个接口有多个实现，可以用分组区分 -->
+	<dubbo:service interface="com.wenge.textclassify.service.TextClassifyService" ref="TextService" 
+		protocol="dubbo"  version="1.0" group="analysis_group"></dubbo:service>
+	<bean id="TextService" class="com.wenge.textclassify.impl.TextClassifyImpl" />
+
+</beans>

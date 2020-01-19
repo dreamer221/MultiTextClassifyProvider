@@ -1,0 +1,4 @@
+1.tensorflow_jni.dll是在windows环境运行java版本的tensorflow需要的文件
+2.jni目录是在linux环境下运行java版本的tensorflow需要的文件
+3.models目录中存储的是python训练完成的各个分类器模型的二进制文件
+4.data目录下存储的是将文字转换成的向量所需的词汇表
